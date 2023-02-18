@@ -103,6 +103,36 @@ class ArbolBinarioBalanceado:
             return 0
         return current.height
     
+    def levelOrderPrint(self, root: Node) -> None:
+        '''
+        Imprime el recorrido por niveles
+
+        Args:
+            root (Node) : [Our tree's root]
+        '''
+        height = self.get_hight(root)
+
+        for level in range(1, height+1):
+            print(f'Level {level}', end=': ')
+            self.levelOrderTravel(root, level)
+            print('\n')
+
+    def levelOrderTravel(self, root: Node, level: int) -> None:
+        '''
+        Recorre el arbol por niveles
+
+        Args:
+            root  (Node) : [Node from where we're going to start the moving]
+            level (int)  : [Respective level of the node where we started to move]
+        '''
+        if root is None:
+            return
+        if level == 1:
+            print(f'{root.value}', end=' ')
+        elif level > 1:
+            self.levelOrderTravel(root.left, level-1)
+            self.levelOrderTravel(root.right, level-1)
+    
     def rotacion_derecha(self, current: Node) -> Node:
         '''
         Rotación simple derecha de un arbol balanceado
@@ -153,15 +183,19 @@ arbol.agregar_nodo(2)
 arbol.agregar_nodo(1)
 
 # Probando si funciona el autobalanceo
-print(arbol.root.left.left.left)
+# print(arbol.root.left.left.left)
 
-print(arbol.get_hight(arbol.root.left.left.left))
+# print(arbol.get_hight(arbol.root.left.left.left))
+
+# Probando el recorrido por niveles
+arbol.levelOrderPrint(arbol.root)
 
 '''
 Referencias: 
-
+   
     - https://openai.com/blog/chatgpt/
     - https://www.utm.mx/~jahdezp/archivos%20estructuras/Arboles%20AVL.pdf
     - https://es.wikipedia.org/wiki/Rotaci%C3%B3n_de_%C3%A1rboles
+    - https://www.geeksforgeeks.org/level-order-tree-traversal/
     
 '''
