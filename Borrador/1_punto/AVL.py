@@ -122,7 +122,7 @@ class ArbolBinarioBalanceado:
     
     def rotacion_izquierda(self, current: Node) -> Node:
         '''
-        Rotación simple derecha de un arbol balanceado
+        Rotación simple izquierda de un arbol balanceado
 
         Args:
             current (Node) : [Node where there're unbalanced factor]
