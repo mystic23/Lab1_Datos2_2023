@@ -234,24 +234,37 @@ class ArbolBinarioBalanceado:
         
         return nueva_raiz
     
-    def buscar_nodo(self,root,value):
+    def buscar_nodo(self,value):
+        """
+        Busca un nodo, avisando si no es hallado
+        
+        Args:
+            value:[value of node to find]
+        """
+        node = self.buscar_nodo_recursivo(self.root,value)
+        # Usa llamado recursivo para guardar el resultado
+        if node is None:
+            print(f"{value} no fue hallado")
+
+    def buscar_nodo_recursivo(self,root,value):
         """
         Busca recursivamente un nodo
-        y muestra el nivel e hijos
+        y muestra la altura e hijos
 
         Args:
             root(Node): [current node]
             value(int/str): [value of node we search]
         """
         if root is None:
-            return
+            return None
         else:
             if value<root.value:
-                self.buscar_nodo(root.left,value)
+                return self.buscar_nodo_recursivo(root.left,value)
             elif value>root.value:
-                self.buscar_nodo(root.right,value)
+                return self.buscar_nodo_recursivo(root.right,value)
             elif value == root.value:
-                print(f"{root} lvl {root.height} left:{root.left} right {root.right}")
+                print(f"{root} height {root.height} left:{root.left} right {root.right}")
+                return root
     
     def leftmost(self,root)->Node:
         """
@@ -367,6 +380,7 @@ arbol.levelOrderPrint(arbol.root)
 arbol.uncle(2)
 arbol.grandad(10)
 arbol.grandad(7)
+arbol.buscar_nodo(143)
 '''
 Referencias: 
    
