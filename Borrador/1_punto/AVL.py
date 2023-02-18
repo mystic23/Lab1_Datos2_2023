@@ -1,11 +1,13 @@
 from node import Node
 
 class ArbolBinarioBalanceado:
-    def __init__(self) -> None:
+    def __init__(self,nodos=None) -> None:
         '''
         Iniciamos el arbol binario balanceado con una raíz
         '''
         self.root = None
+        if nodos is not None:
+            self.agregar_nodos(nodos)
     
     def agregar_nodo(self, value: int):
         '''
@@ -18,6 +20,16 @@ class ArbolBinarioBalanceado:
         self.root = self.agregar_nodo_recursivamente(self.root, value)
         # print(f'Se acaba de agregar {value}')
     
+    def agregar_nodos(self,nodos):
+        """
+        Permite agregar varios nodos al tiempo
+
+        Args:
+            nodos(list) : [lista de valores a insertar]
+        """
+        for x in nodos:
+            self.root = self.agregar_nodo_recursivamente(self.root,x)
+
     def agregar_nodo_recursivamente(self, current: int, value: int) -> Node:
         '''
         Permite agregar de manera recursiva un nodo al arbol
@@ -77,6 +89,61 @@ class ArbolBinarioBalanceado:
         
         return current
     
+    def eliminar_nodo(self,root,value):
+        '''
+        Permite agregar de manera recursiva un nodo al arbol
+
+        Args:
+            root (int) : [Current node]
+            value   (int) : [Vale of the node we want to delete]
+        
+        '''
+        # Borrado de un BST tradicional
+        if root is None: 
+            return root
+        if value < root.value: #Avanzamos por el arbol
+            root.left = self.eliminar_nodo(root.left,value)
+        elif value>root.value:
+            root.right = self.eliminar_nodo(root.right,value)
+        else: # cuando llegamos al que tenga el value
+        #se remplaza con algun hijo o tenga o None si no tiene
+            if root.left is None: #hijo único derecho
+                temp = root.right
+                root = None
+                return temp
+
+            elif root.right is None: #hijo único izquierdo
+                temp = root.left
+                root = None
+                return temp
+            #si tiene dos hijos
+            temp = self.leftmost(root.right) 
+            # replace root with smallest in right subtree
+            root.value = temp.value
+            root.right = self.eliminar_nodo(root.right,temp.value)
+
+        #Se actualiza la altura
+        root.height = 1 + max(self.get_hight(root.left),
+                            self.get_hight(root.right)) 
+        # Se calcula el factor de equilibrio 
+        factor = self.balanced_factor(root)
+ 
+        # desbalanceado a la derecha
+        if factor<-1 and self.balanced_factor(root.right)<=0: 
+            return self.rotacion_izquierda(root)
+        if factor<-1 and  self.balanced_factor(root.right)>0:
+            root.right = self.rotacion_derecha(root.right)
+            return self.rotacion_izquierda(root)
+
+        #desbalanceado a la izquierda
+        if factor>1 and  self.balanced_factor(root.left)>=0: 
+            return self.rotacion_derecha(root)
+        if factor>1 and self.balanced_factor(root.left)<0: 
+            root.left = self.rotacion_izquierda(root.left)
+            return self.rotacion_derecha(root)
+        
+        return root
+        
     # Calculamos el factor de equilibrio 
     def balanced_factor(self, current: Node) -> int:
         '''
@@ -166,26 +233,46 @@ class ArbolBinarioBalanceado:
         nueva_raiz.height = 1 + max(self.get_hight(nueva_raiz.left), self.get_hight(nueva_raiz.right))
         
         return nueva_raiz
+    
+    def buscar_nodo(self,root,value):
+        """
+        Busca recursivamente un nodo
+        y muestra el nivel e hijos
 
+        Args:
+            root(Node): [current node]
+            value(int/str): [value of node we search]
+        """
+        if root is None:
+            return
+        else:
+            if value<root.value:
+                self.buscar_nodo(root.left,value)
+            elif value>root.value:
+                self.buscar_nodo(root.right,value)
+            elif value == root.value:
+                print(f"{root} lvl {root.height} left:{root.left} right {root.right}")
+    
+    def leftmost(self,root)->Node:
+        """
+        Regresa el nodo mas pequeño
+        en un (sub)árbol
+
+        Args:
+            root(Node): [root of tree]
+        """
+        P = root
+        lvl = 0
+        while P.left is not None:
+            lvl += 1
+            P = P.left
+        return P
+    
 # Instanciamos el arbol binario balanceado
-arbol = ArbolBinarioBalanceado()
+#arbol = ArbolBinarioBalanceado([10,5,15,3,7,13,18,4,2,1])
 
-# Agregamos algunos nodos al árbol
-arbol.agregar_nodo(10)
-arbol.agregar_nodo(5)
-arbol.agregar_nodo(15)
-arbol.agregar_nodo(3)
-arbol.agregar_nodo(7)
-arbol.agregar_nodo(13)
-arbol.agregar_nodo(18)
-arbol.agregar_nodo(4)
-arbol.agregar_nodo(2)
-arbol.agregar_nodo(1)
-
-# Probando si funciona el autobalanceo
-# print(arbol.root.left.left.left)
-
-# print(arbol.get_hight(arbol.root.left.left.left))
+arbol = ArbolBinarioBalanceado([3,5,2,4])
+arbol.root = arbol.eliminar_nodo(arbol.root,2)
 
 # Probando el recorrido por niveles
 arbol.levelOrderPrint(arbol.root)
