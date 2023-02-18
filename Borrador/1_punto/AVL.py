@@ -1,3 +1,5 @@
+from node import Node
+
 class ArbolBinarioBalanceado:
     def __init__(self) -> None:
         '''
@@ -14,7 +16,7 @@ class ArbolBinarioBalanceado:
         '''
         # Le agrega a la raíz el siguiente nodo el cual lo agregaremos de manera recursiva en la funcion "agregar_nodo_recursivamente"
         self.root = self.agregar_nodo_recursivamente(self.root, value)
-        print(f'Se acaba de agregar {value}')
+        # print(f'Se acaba de agregar {value}')
     
     def agregar_nodo_recursivamente(self, current: int, value: int) -> Node:
         '''
@@ -150,10 +152,10 @@ arbol.agregar_nodo(4)
 arbol.agregar_nodo(2)
 arbol.agregar_nodo(1)
 
-#Probando si funciona el autobalanceo
-# print(arbol.root.left.left.left)
+# Probando si funciona el autobalanceo
+print(arbol.root.left.left.left)
 
-# print(arbol.get_hight(arbol.root.left.left.left))
+print(arbol.get_hight(arbol.root.left.left.left))
 
 '''
 Referencias: 
