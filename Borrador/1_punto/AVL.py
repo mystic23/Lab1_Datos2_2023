@@ -268,15 +268,105 @@ class ArbolBinarioBalanceado:
             P = P.left
         return P
     
-# Instanciamos el arbol binario balanceado
-#arbol = ArbolBinarioBalanceado([10,5,15,3,7,13,18,4,2,1])
+    def buscar_padre(self,value)->Node:
+        """
+        Busca el padre de nodo con value
 
-arbol = ArbolBinarioBalanceado([3,5,2,4])
-arbol.root = arbol.eliminar_nodo(arbol.root,2)
+        Args:
+            value:[value whose father we look for]
+
+        Returns:
+            Node:[if there is a father]
+            None:[if there cannot be a father]
+        """
+        if self.root is None:
+            print("None")
+            return
+        if self.root.value == value:
+            return None
+        else:
+            traversed = []
+            traversed.append(self.root)
+            if self.root.value == value:
+                self.root = None
+            else:
+                while len(traversed) !=0:
+                    x = traversed.pop(0)
+                    if x.left is not None:
+                        if x.left.value == value:
+                            return x
+                        else:
+                            traversed.append(x.left)
+                    if x.right is not None:
+                        if x.right.value == value:
+                            return x
+                        else:
+                            traversed.append(x.right)
+
+    def uncle(self,value):
+        """
+        Muestra (si lo tiene) el tío 
+        de un nodo
+
+        Args:
+            value:[value of node whose uncle we search]
+        """
+        father = self.buscar_padre(value) #  buscar papá
+        if father is None:
+            print(f"{value} has no father, therefore no uncle")
+        elif father is self.root:
+            print("father is root so there is no uncle")
+        else:
+            traversed = []
+            traversed.append(self.root)
+            if self.root.value == value: # find grandad select non father-child
+                self.root = None
+            else:
+                while len(traversed) !=0:
+                    x = traversed.pop(0)
+                    if x.left is not None:
+                        if x.left.value == father.value:
+                            if x.right is not None:
+                                print(f"uncle of {value} is {x.right}")
+                                return
+                        else:
+                            traversed.append(x.left)
+                    if x.right is not None:
+                        if x.right.value == father.value:
+                            if x.left is not None:
+                                print(f"uncle of {value} is {x.left}")
+                                return
+                        else:
+                            traversed.append(x.right)
+
+    def grandad(self,value):
+        """
+        Muestra (si lo tiene) el abuelo de un nodo
+
+        Args:
+            value:[value of node whose uncle we search]
+        """
+        father = self.buscar_padre(value) # determino padre
+        if father is None:
+            print(f"{value} has no father, therefore no grandad")
+        elif father is self.root:
+            print("father is root, so there is no grandad")
+        else:
+            grandad = self.buscar_padre(father.value) # abuelo = padre de padre
+            print(f"grandad of {value} is {grandad}")
+
+
+# Instanciamos el arbol binario balanceado
+arbol = ArbolBinarioBalanceado([10,5,15,3,7,13,18,4,2,1])
+
+#arbol = ArbolBinarioBalanceado([3,5,2,4])
+#arbol.root = arbol.eliminar_nodo(arbol.root,2)
 
 # Probando el recorrido por niveles
 arbol.levelOrderPrint(arbol.root)
-
+arbol.uncle(2)
+arbol.grandad(10)
+arbol.grandad(7)
 '''
 Referencias: 
    
