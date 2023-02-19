@@ -14,7 +14,7 @@ class Node:
 class User(Node):
     def __init__(self,data) -> None:
         self.name = data[0]
-        self.ID = data[1]
+        self.ID = int(data[1])
         self.left = None
         self.right = None
         self.height = 1

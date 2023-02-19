@@ -83,7 +83,7 @@ class ArbolBinarioBalanceado:
             return self.rotacion_derecha(current)
         
         # Se realiza una rotación doble izquierda (condiciones que me dijo chatgpt)
-        if factor_equilibrio < -1 and value < current.right.valor:
+        if factor_equilibrio < -1 and value < current.right.value:
             current.right = self.rotacion_derecha(current.right)
             return self.rotacion_izquierda(current)
         
@@ -388,17 +388,16 @@ class ArbolBinarioBalanceado:
 
 
 # Instanciamos el arbol binario balanceado
-arbol = ArbolBinarioBalanceado([10,5,15,3,7,13,18,4,2,1])
+#arbol = ArbolBinarioBalanceado([10,5,15,3,7,13,18,4,2,1])
+arbol = ArbolBinarioBalanceado([10,7,14,5,12,15,8,4,11,13,6,9,16])
 
 #arbol = ArbolBinarioBalanceado([3,5,2,4])
 #arbol.root = arbol.eliminar_nodo(arbol.root,2)
 
 # Probando el recorrido por niveles
 arbol.levelOrderPrint(arbol.root)
-arbol.uncle(2)
-arbol.grandad(10)
-arbol.grandad(7)
-arbol.buscar_nodo(143)
+arbol.root = arbol.eliminar_nodo(arbol.root,10)
+arbol.levelOrderPrint(arbol.root)
 '''
 Referencias: 
    

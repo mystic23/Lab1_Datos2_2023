@@ -1,7 +1,7 @@
 # Lab1_Datos2_2023
 
 ## 1
-+ Leer CSV []
++ Leer CSV [X]
 + Insertar un nodo (opcional, hacer validación). [X]
 + Eliminar un nodo. [X]
 + Buscar un nodo (Queda libre como devolver si el nodo existe). [X]

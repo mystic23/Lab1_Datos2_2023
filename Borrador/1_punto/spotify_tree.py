@@ -13,11 +13,10 @@ class Spotify_Tree:
         Permite agregar un nodo al arbol
 
         Args: 
-            data (List) : [row of dataframe with data]
+            data (List) : [User_name,User_ID,Artist_name,Track,valence]
         '''
         # Le agrega a la raíz el siguiente nodo el cual lo agregaremos de manera recursiva en la funcion "agregar_nodo_recursivamente"
         self.root = self.agregar_nodo_recursivamente(self.root, data)
-        # print(f'Se acaba de agregar {value}')
     
     def agregar_nodos(self,dataframe):
         """
@@ -28,13 +27,10 @@ class Spotify_Tree:
         """
         
         for index in range(len(dataframe["User_ID"])):
-            if not self.existe_nodo(dataframe["User_ID"].iloc[index]): 
+            if not self.existe_nodo(int(dataframe["User_ID"].iloc[index])): 
                 # si no está ya un usuario con el ID agregarlo al arbol
                 self.agregar_nodo(dataframe.iloc[index].tolist())
-            
-
-    def agregar_track(self,data):
-        pass
+        
 
     def agregar_nodo_recursivamente(self, current: int, data) -> User:
         '''
@@ -45,17 +41,17 @@ class Spotify_Tree:
             data (List) : [row of dataframe with data]
         
         Returns:
-            Node : Node we're going to add
+            User : User we're going to add
         '''
-
+        id = int(data[1]) # para comparar correctamente como entero
         # Preguntamos que si el nodo actual es distinto de None, que me retorne el nodo con el valor que
         # queremos agregar (recordar que retorna un nodo porque lo queremos usar en el método de arriba llamado
         # agregar_nodo)
         if not current:
             return User(data)
 
-        # Si el valor es menor al valor del nodo actual, ira a la izquierda    
-        elif data[1] < current.ID:
+        # Si el valor es menor al valor del nodo actual, ira a la izquierda   
+        elif id < current.ID:
             current.left = self.agregar_nodo_recursivamente(current.left, data)
         # Misma lógica para el lado derecho
         else:
@@ -76,42 +72,42 @@ class Spotify_Tree:
 
         # Definición de Hoja: Nodo sin hijos
 
-        if factor_equilibrio > 1 and data[1] < current.left.ID:
+        if factor_equilibrio > 1 and id < current.left.ID:
             return self.rotacion_derecha(current)
         
         # Aquí lo mismo pero cuando se va a desbalancear hacia la derecha
-        if factor_equilibrio < -1 and data[1] > current.right.ID:
+        if factor_equilibrio < -1 and id > current.right.ID:
             return self.rotacion_izquierda(current)
         
         # Se realiza una rotación doble derecha (condiciones que me dijo chatgpt)
-        if factor_equilibrio > 1 and data[1] > current.left.ID:
+        if factor_equilibrio > 1 and id > current.left.ID:
             current.left = self.rotacion_izquierda(current.left)
             return self.rotacion_derecha(current)
         
         # Se realiza una rotación doble izquierda (condiciones que me dijo chatgpt)
-        if factor_equilibrio < -1 and data[1] < current.right.ID:
+        if factor_equilibrio < -1 and id < current.right.ID:
             current.right = self.rotacion_derecha(current.right)
             return self.rotacion_izquierda(current)
         
         return current
     
-    def eliminar_nodo(self,root,value):
+    def eliminar_nodo(self,root,ID:int):
         '''
         Permite agregar de manera recursiva un nodo al arbol
 
         Args:
             root (int) : [Current node]
-            value   (int) : [Vale of the node we want to delete]
+            ID   (int) : [ID of user we want to delete]
         
         '''
         # Borrado de un BST tradicional
         if root is None: 
             return root
-        if value < root.value: #Avanzamos por el arbol
-            root.left = self.eliminar_nodo(root.left,value)
-        elif value>root.value:
-            root.right = self.eliminar_nodo(root.right,value)
-        else: # cuando llegamos al que tenga el value
+        if ID < root.ID: #Avanzamos por el arbol
+            root.left = self.eliminar_nodo(root.left,ID)
+        elif ID>root.ID:
+            root.right = self.eliminar_nodo(root.right,ID)
+        else: # cuando llegamos al que tenga el ID
         #se remplaza con algun hijo o tenga o None si no tiene
             if root.left is None: #hijo único derecho
                 temp = root.right
@@ -124,9 +120,9 @@ class Spotify_Tree:
                 return temp
             #si tiene dos hijos
             temp = self.leftmost(root.right) 
-            # replace root with smallest in right subtree
-            root.value = temp.value
-            root.right = self.eliminar_nodo(root.right,temp.value)
+            # remplazamos la raiz con el menor usuario del sub arbol derecho
+            root.ID,root.name = temp.ID,temp.name
+            root.right = self.eliminar_nodo(root.right,temp.ID)
 
         #Se actualiza la altura
         root.height = 1 + max(self.get_hight(root.left),
@@ -306,7 +302,22 @@ class Spotify_Tree:
             P = P.left
         return P
     
-    def buscar_padre(self,value)->Node:
+    def rightmost(self,root)->Node:
+        """
+        Regresa el nodo con ID mas grande
+        en un (sub)árbol
+
+        Args:
+            root(Node): [root of tree]
+        """
+        P = root
+        lvl = 0
+        while P.right is not None:
+            lvl += 1
+            P = P.right
+        return P
+    
+    def buscar_padre(self,ID:int)->Node:
         """
         Busca el padre de nodo con value
 
@@ -320,83 +331,106 @@ class Spotify_Tree:
         if self.root is None:
             print("None")
             return
-        if self.root.value == value:
+        if self.root.ID == ID:
             return None
         else:
             traversed = []
             traversed.append(self.root)
-            if self.root.value == value:
+            if self.root.ID == ID:
                 self.root = None
             else:
                 while len(traversed) !=0:
                     x = traversed.pop(0)
                     if x.left is not None:
-                        if x.left.value == value:
+                        if x.left.ID == ID:
                             return x
                         else:
                             traversed.append(x.left)
                     if x.right is not None:
-                        if x.right.value == value:
+                        if x.right.ID == ID:
                             return x
                         else:
                             traversed.append(x.right)
 
-    def uncle(self,value):
+    def uncle(self,ID):
         """
         Muestra (si lo tiene) el tío 
         de un nodo
 
         Args:
-            value:[value of node whose uncle we search]
+            ID:[ID of node whose uncle we search]
         """
-        father = self.buscar_padre(value) #  buscar papá
+        father = self.buscar_padre(ID) #  buscar papá
         if father is None:
-            print(f"{value} has no father, therefore no uncle")
+            print(f"it has no father, therefore no uncle")
         elif father is self.root:
             print("father is root so there is no uncle")
         else:
             traversed = []
             traversed.append(self.root)
-            if self.root.value == value: # find grandad select non father-child
+            if self.root.ID == ID: # find grandad select non father-child
                 self.root = None
             else:
                 while len(traversed) !=0:
                     x = traversed.pop(0)
                     if x.left is not None:
-                        if x.left.value == father.value:
+                        if x.left.ID == father.ID:
                             if x.right is not None:
-                                print(f"uncle of {value} is {x.right}")
+                                print(f"uncle is {x.right}")
                                 return
                         else:
                             traversed.append(x.left)
                     if x.right is not None:
-                        if x.right.value == father.value:
+                        if x.right.ID == father.ID:
                             if x.left is not None:
-                                print(f"uncle of {value} is {x.left}")
+                                print(f"uncle  is {x.left}")
                                 return
                         else:
                             traversed.append(x.right)
 
-    def grandad(self,value):
+    def grandad(self,ID):
         """
         Muestra (si lo tiene) el abuelo de un nodo
 
         Args:
-            value:[value of node whose uncle we search]
+            ID:[ID of node whose uncle we search]
         """
-        father = self.buscar_padre(value) # determino padre
+        father = self.buscar_padre(ID) # determino padre
         if father is None:
-            print(f"{value} has no father, therefore no grandad")
+            print(f"it has no father, therefore no grandad")
         elif father is self.root:
             print("father is root, so there is no grandad")
         else:
-            grandad = self.buscar_padre(father.value) # abuelo = padre de padre
-            print(f"grandad of {value} is {grandad}")
+            grandad = self.buscar_padre(father.ID) # abuelo = padre de padre
+            print(f"grandad  is {grandad}")
+
+    def dar_ID(self,root,name):
+        """
+        Busca un usuario con nombre dado,
+        devuelve el ID del primero q halle
+
+        Args:
+            root(User):[root of tree]
+            name(str):[name we look in User]
+        """
+        if root is None:
+            return None
+        else:
+            #print(f"{name.lower()} {root.name.lower()}")
+            if name.lower() in root.name.lower():
+                return root.ID #valida que tenga el nombre
+            #recursion izquierda
+            res1 = self.dar_ID(root.left,name)
+            if res1:
+                return res1
+            #recursion derecha
+            res2 = self.dar_ID(root.right,name)
+            return res2
 
 
 import pandas as pd
 
-#Merge 3 dataframes into 1                
+#Se juntan los 3 csv en un solo dataframe            
 df = pd.read_csv("Borrador\\1_punto\\data\\User_track_data.csv")
 df1 = pd.read_csv("Borrador\\1_punto\\data\\User_track_data_2.csv")
 m1 = pd.merge(df,df1,how="outer") # m1 = df+df1
@@ -420,12 +454,5 @@ for k in range(len(mega_df['User_ID'])):
     mega_df['User_ID'][k] = new_id(mega_df['User_ID'][k])
 
 tree = Spotify_Tree(mega_df)
-
 tree.levelOrderPrint(tree.root)
-print("Comparaciones")
-print(tree.root.ID>tree.root.left.left.ID)
-print(int(tree.root.ID)>int(tree.root.left.left.ID))
-print(tree.root.ID)
-print(tree.root.left.left.ID)
-#Mañana paso los string a int para q tenga mas sentido al usuario
-#tambien convierto las demas
+tree.buscar_nodo(tree.dar_ID(tree.root,"K3nnyZY"))
