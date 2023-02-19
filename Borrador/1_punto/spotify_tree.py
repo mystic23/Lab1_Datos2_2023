@@ -1,42 +1,48 @@
-from node import Node
+from node import Node,User
 
-class ArbolBinarioBalanceado:
-    def __init__(self,nodos=None) -> None:
+class Spotify_Tree:
+    def __init__(self,dataframe) -> None:
         '''
         Iniciamos el arbol binario balanceado con una raíz
         '''
         self.root = None
-        if nodos is not None:
-            self.agregar_nodos(nodos)
+        self.agregar_nodos(dataframe)
     
-    def agregar_nodo(self, value: int):
+    def agregar_nodo(self, data):
         '''
         Permite agregar un nodo al arbol
 
         Args: 
-            value (int) : [Value of a node]
+            data (List) : [row of dataframe with data]
         '''
         # Le agrega a la raíz el siguiente nodo el cual lo agregaremos de manera recursiva en la funcion "agregar_nodo_recursivamente"
-        self.root = self.agregar_nodo_recursivamente(self.root, value)
+        self.root = self.agregar_nodo_recursivamente(self.root, data)
         # print(f'Se acaba de agregar {value}')
     
-    def agregar_nodos(self,nodos):
+    def agregar_nodos(self,dataframe):
         """
         Permite agregar varios nodos al tiempo
 
         Args:
-            nodos(list) : [lista de valores a insertar]
+            dataframe(Dataframe) : [dataframe with users info]
         """
-        for x in nodos:
-            self.root = self.agregar_nodo_recursivamente(self.root,x)
+        
+        for index in range(len(dataframe["User_ID"])):
+            if not self.existe_nodo(dataframe["User_ID"].iloc[index]): 
+                # si no está ya un usuario con el ID agregarlo al arbol
+                self.agregar_nodo(dataframe.iloc[index].tolist())
+            
 
-    def agregar_nodo_recursivamente(self, current: int, value: int) -> Node:
+    def agregar_track(self,data):
+        pass
+
+    def agregar_nodo_recursivamente(self, current: int, data) -> User:
         '''
         Permite agregar de manera recursiva un nodo al arbol
 
         Args:
             current (int) : [Current node]
-            value   (int) : [Vale of the node we want to add]
+            data (List) : [row of dataframe with data]
         
         Returns:
             Node : Node we're going to add
@@ -46,14 +52,14 @@ class ArbolBinarioBalanceado:
         # queremos agregar (recordar que retorna un nodo porque lo queremos usar en el método de arriba llamado
         # agregar_nodo)
         if not current:
-            return Node(value)
+            return User(data)
 
         # Si el valor es menor al valor del nodo actual, ira a la izquierda    
-        elif value < current.value:
-            current.left = self.agregar_nodo_recursivamente(current.left, value)
+        elif data[1] < current.ID:
+            current.left = self.agregar_nodo_recursivamente(current.left, data)
         # Misma lógica para el lado derecho
         else:
-            current.right = self.agregar_nodo_recursivamente(current.right, value)
+            current.right = self.agregar_nodo_recursivamente(current.right, data)
         
         # Vamos a asignarle la altura al nodo 
         current.height = 1 + max(self.get_hight(current.left), self.get_hight(current.right))
@@ -70,20 +76,20 @@ class ArbolBinarioBalanceado:
 
         # Definición de Hoja: Nodo sin hijos
 
-        if factor_equilibrio > 1 and value < current.left.value:
+        if factor_equilibrio > 1 and data[1] < current.left.ID:
             return self.rotacion_derecha(current)
         
         # Aquí lo mismo pero cuando se va a desbalancear hacia la derecha
-        if factor_equilibrio < -1 and value > current.right.value:
+        if factor_equilibrio < -1 and data[1] > current.right.ID:
             return self.rotacion_izquierda(current)
         
         # Se realiza una rotación doble derecha (condiciones que me dijo chatgpt)
-        if factor_equilibrio > 1 and value > current.left.value:
+        if factor_equilibrio > 1 and data[1] > current.left.ID:
             current.left = self.rotacion_izquierda(current.left)
             return self.rotacion_derecha(current)
         
         # Se realiza una rotación doble izquierda (condiciones que me dijo chatgpt)
-        if factor_equilibrio < -1 and value < current.right.valor:
+        if factor_equilibrio < -1 and data[1] < current.right.ID:
             current.right = self.rotacion_derecha(current.right)
             return self.rotacion_izquierda(current)
         
@@ -195,7 +201,7 @@ class ArbolBinarioBalanceado:
         if root is None:
             return
         if level == 1:
-            print(f'{root.value}', end=' ')
+            print(f'{root.name}', end=' ')
         elif level > 1:
             self.levelOrderTravel(root.left, level-1)
             self.levelOrderTravel(root.right, level-1)
@@ -251,7 +257,7 @@ class ArbolBinarioBalanceado:
             return False
         else:
             return True
-        
+
     def buscar_nodo(self,value):
         """
         Busca un nodo, avisando si no es hallado
@@ -262,7 +268,9 @@ class ArbolBinarioBalanceado:
         node = self.buscar_nodo_recursivo(self.root,value)
         # Usa llamado recursivo para guardar el resultado
         if node is None:
-            print(f"{value} no fue hallado")
+            print("No hallado")
+        else:
+            print(f"{node} height {node.height} left:{node.left} right {node.right}")
 
     def buscar_nodo_recursivo(self,root,value):
         """
@@ -276,12 +284,11 @@ class ArbolBinarioBalanceado:
         if root is None:
             return None
         else:
-            if value<root.value:
+            if value<root.ID:
                 return self.buscar_nodo_recursivo(root.left,value)
-            elif value>root.value:
+            elif value>root.ID:
                 return self.buscar_nodo_recursivo(root.right,value)
-            elif value == root.value:
-                print(f"{root} height {root.height} left:{root.left} right {root.right}")
+            elif value == root.ID:
                 return root
     
     def leftmost(self,root)->Node:
@@ -387,24 +394,38 @@ class ArbolBinarioBalanceado:
             print(f"grandad of {value} is {grandad}")
 
 
-# Instanciamos el arbol binario balanceado
-arbol = ArbolBinarioBalanceado([10,5,15,3,7,13,18,4,2,1])
+import pandas as pd
 
-#arbol = ArbolBinarioBalanceado([3,5,2,4])
-#arbol.root = arbol.eliminar_nodo(arbol.root,2)
+#Merge 3 dataframes into 1                
+df = pd.read_csv("Borrador\\1_punto\\data\\User_track_data.csv")
+df1 = pd.read_csv("Borrador\\1_punto\\data\\User_track_data_2.csv")
+m1 = pd.merge(df,df1,how="outer") # m1 = df+df1
+df2 = pd.read_csv("Borrador\\1_punto\\data\\User_track_data_3.csv")
+mega_df = pd.merge(m1,df2,how="outer") # mega_df = df2+m1
 
-# Probando el recorrido por niveles
-arbol.levelOrderPrint(arbol.root)
-arbol.uncle(2)
-arbol.grandad(10)
-arbol.grandad(7)
-arbol.buscar_nodo(143)
-'''
-Referencias: 
-   
-    - https://openai.com/blog/chatgpt/
-    - https://www.utm.mx/~jahdezp/archivos%20estructuras/Arboles%20AVL.pdf
-    - https://es.wikipedia.org/wiki/Rotaci%C3%B3n_de_%C3%A1rboles
-    - https://www.geeksforgeeks.org/level-order-tree-traversal/
-    
-'''
+def new_id(text: str) -> str:
+    '''
+    Devuelve un ID en su formato ASCII
+
+    Args:
+        text (str) : [Text that we'll transform into ASCII representation]
+    '''
+    carSplit = [letra for letra in text]
+    ascii_rep = [ord(k) for k in carSplit]
+    nuevoID = ''.join([str(i) for i  in ascii_rep])
+
+    return nuevoID
+
+for k in range(len(mega_df['User_ID'])):
+    mega_df['User_ID'][k] = new_id(mega_df['User_ID'][k])
+
+tree = Spotify_Tree(mega_df)
+
+tree.levelOrderPrint(tree.root)
+print("Comparaciones")
+print(tree.root.ID>tree.root.left.left.ID)
+print(int(tree.root.ID)>int(tree.root.left.left.ID))
+print(tree.root.ID)
+print(tree.root.left.left.ID)
+#Mañana paso los string a int para q tenga mas sentido al usuario
+#tambien convierto las demas
