@@ -1,4 +1,6 @@
 from node import Node,User
+import pandas as pd
+pd.options.mode.chained_assignment = None  # default='warn'
 
 class Spotify_Tree:
     def __init__(self,dataframe) -> None:
@@ -27,9 +29,15 @@ class Spotify_Tree:
         """
         
         for index in range(len(dataframe["User_ID"])):
-            if not self.existe_nodo(int(dataframe["User_ID"].iloc[index])): 
+            id = self.convertir_id(dataframe["User_ID"].iloc[index])
+            # representar en caracteres numericos el ID
+            if not self.existe_nodo(int(id)):
+                #alteramos el dataframe para poder pasar el nuevo id
+                dataframe["User_ID"].iloc[index] = id 
                 # si no está ya un usuario con el ID agregarlo al arbol
                 self.agregar_nodo(dataframe.iloc[index].tolist())
+            else:
+                self.retornar_nodo(int(id)).update(dataframe.iloc[index].tolist())
         
 
     def agregar_nodo_recursivamente(self, current: int, data) -> User:
@@ -236,7 +244,7 @@ class Spotify_Tree:
         
         return nueva_raiz
     
-    def existe_nodo(self,value)->bool:
+    def existe_nodo(self,ID)->bool:
         """
         Busca un nodo, avisando si no es hallado
         
@@ -247,26 +255,43 @@ class Spotify_Tree:
             True [If there is a node with value]
             False [if there is not ]
         """
-        node = self.buscar_nodo_recursivo(self.root,value)
+        node = self.buscar_nodo_recursivo(self.root,ID)
         # Usa llamado recursivo para guardar el resultado
         if node is None:
             return False
         else:
             return True
 
-    def buscar_nodo(self,value):
+    def buscar_nodo(self,ID):
         """
         Busca un nodo, avisando si no es hallado
         
         Args:
-            value:[value of node to find]
+            ID(int):[ID of node to find]
         """
-        node = self.buscar_nodo_recursivo(self.root,value)
+        node = self.buscar_nodo_recursivo(self.root,ID)
         # Usa llamado recursivo para guardar el resultado
         if node is None:
             print("No hallado")
         else:
-            print(f"{node} height {node.height} left:{node.left} right {node.right}")
+            print(f"{node.name} valence {node.valence_mean} height {node.height} left:{node.left} right {node.right}")
+
+    def retornar_nodo(self,ID)->User:
+        """
+        retorna un nodo
+        
+        Args:
+            ID(int):[ID of node to find]
+        Returns:
+            node:[node being searched if found]
+            None:[otherwise]
+        """
+        node = self.buscar_nodo_recursivo(self.root,ID)
+        # Usa llamado recursivo para guardar el resultado
+        if node is None:
+            return None
+        else:
+            return node
 
     def buscar_nodo_recursivo(self,root,value):
         """
@@ -426,9 +451,19 @@ class Spotify_Tree:
             #recursion derecha
             res2 = self.dar_ID(root.right,name)
             return res2
+    
+    def convertir_id(self,text: str) -> str:
+        '''
+        Devuelve un ID en su formato ASCII
 
+        Args:
+            text (str) : [Text that we'll transform into ASCII representation]
+        '''
+        carSplit = [letra for letra in text]
+        ascii_rep = [ord(k) for k in carSplit]
+        nuevoID = ''.join([str(i) for i  in ascii_rep])
 
-import pandas as pd
+        return nuevoID
 
 #Se juntan los 3 csv en un solo dataframe            
 df = pd.read_csv("Borrador\\1_punto\\data\\User_track_data.csv")
@@ -437,22 +472,11 @@ m1 = pd.merge(df,df1,how="outer") # m1 = df+df1
 df2 = pd.read_csv("Borrador\\1_punto\\data\\User_track_data_3.csv")
 mega_df = pd.merge(m1,df2,how="outer") # mega_df = df2+m1
 
-def new_id(text: str) -> str:
-    '''
-    Devuelve un ID en su formato ASCII
-
-    Args:
-        text (str) : [Text that we'll transform into ASCII representation]
-    '''
-    carSplit = [letra for letra in text]
-    ascii_rep = [ord(k) for k in carSplit]
-    nuevoID = ''.join([str(i) for i  in ascii_rep])
-
-    return nuevoID
-
-for k in range(len(mega_df['User_ID'])):
-    mega_df['User_ID'][k] = new_id(mega_df['User_ID'][k])
 
 tree = Spotify_Tree(mega_df)
 tree.levelOrderPrint(tree.root)
-tree.buscar_nodo(tree.dar_ID(tree.root,"K3nnyZY"))
+tree.buscar_nodo(tree.dar_ID(tree.root,"J"))
+
+print("Number of songs",len(tree.retornar_nodo(tree.dar_ID(tree.root,"J")).songs))
+
+print("First song",tree.retornar_nodo(tree.dar_ID(tree.root,"J")).songs[0])
