@@ -466,10 +466,10 @@ class Spotify_Tree:
         return nuevoID
 
 #Se juntan los 3 csv en un solo dataframe            
-df = pd.read_csv("Borrador\\1_punto\\data\\User_track_data.csv")
-df1 = pd.read_csv("Borrador\\1_punto\\data\\User_track_data_2.csv")
+df = pd.read_csv("1_punto\\data\\User_track_data.csv")
+df1 = pd.read_csv("1_punto\\data\\User_track_data_2.csv")
 m1 = pd.merge(df,df1,how="outer") # m1 = df+df1
-df2 = pd.read_csv("Borrador\\1_punto\\data\\User_track_data_3.csv")
+df2 = pd.read_csv("1_punto\\data\\User_track_data_3.csv")
 mega_df = pd.merge(m1,df2,how="outer") # mega_df = df2+m1
 
 

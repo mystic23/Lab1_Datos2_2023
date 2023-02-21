@@ -11,7 +11,9 @@
 + extra: Interfaz gráfica []
 
 ## 2
-+ escoger problema[]
++ escoger problema[X]
++ crear merkle tree []
++ dar ejemplos
 
 ## 3 
 + plantear ejemplo []
