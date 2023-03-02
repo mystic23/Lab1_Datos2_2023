@@ -466,17 +466,16 @@ class Spotify_Tree:
         return nuevoID
 
 #Se juntan los 3 csv en un solo dataframe            
-df = pd.read_csv("1_punto\\data\\User_track_data.csv")
-df1 = pd.read_csv("1_punto\\data\\User_track_data_2.csv")
-m1 = pd.merge(df,df1,how="outer") # m1 = df+df1
-df2 = pd.read_csv("1_punto\\data\\User_track_data_3.csv")
+# dp = pd.read_csv("./data/")
+df = pd.read_csv("1_punto/data/User_track_data.csv")
+df1 = pd.read_csv("1_punto/data/User_track_data_2.csv")
+m1 = pd.merge(df, df1, how="outer") # m1 = df+df1
+df2 = pd.read_csv("1_punto/data/User_track_data_3.csv")
 mega_df = pd.merge(m1,df2,how="outer") # mega_df = df2+m1
 
 
 tree = Spotify_Tree(mega_df)
 tree.levelOrderPrint(tree.root)
 tree.buscar_nodo(tree.dar_ID(tree.root,"J"))
-
 print("Number of songs",len(tree.retornar_nodo(tree.dar_ID(tree.root,"J")).songs))
-
 print("First song",tree.retornar_nodo(tree.dar_ID(tree.root,"J")).songs[0])
