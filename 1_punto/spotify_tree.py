@@ -66,7 +66,8 @@ class Spotify_Tree:
             current.right = self.agregar_nodo_recursivamente(current.right, data)
         
         # Vamos a asignarle la altura al nodo 
-        current.height = 1 + max(self.get_hight(current.left), self.get_hight(current.right))
+        current._heightCalc = 1 + max(self.get_hight(current.left), self.get_hight(current.right))
+        current.height = current._heightCalc - 1
         
         # Falculamos el factor de equilibrio de los nodos a los caules estamos recorriendo para verificar
         # de inmediato si se deben realizar rotaciones o no
@@ -133,8 +134,12 @@ class Spotify_Tree:
             root.right = self.eliminar_nodo(root.right,temp.ID)
 
         #Se actualiza la altura
-        root.height = 1 + max(self.get_hight(root.left),
+        root._heightCalc = 1 + max(self.get_hight(root.left),
                             self.get_hight(root.right)) 
+        
+        root.height = root._heightCalc - 1
+                      
+        
         # Se calcula el factor de equilibrio 
         factor = self.balanced_factor(root)
  
@@ -178,7 +183,7 @@ class Spotify_Tree:
         '''
         if not current:
             return 0
-        return current.height
+        return current._heightCalc
     
     def levelOrderPrint(self, root: Node) -> None:
         '''
@@ -222,8 +227,11 @@ class Spotify_Tree:
         nueva_raiz.right = current
         
         # Arreglamos las respectivas alturas de los nodos que estamos moviendo
-        current.height = 1 + max(self.get_hight(current.left), self.get_hight(current.right))
-        nueva_raiz.height = 1 + max(self.get_hight(nueva_raiz.left), self.get_hight(nueva_raiz.right))
+        current._heightCalc = 1 + max(self.get_hight(current.left), self.get_hight(current.right))
+        current.height = current._heightCalc - 1
+
+        nueva_raiz._heightCalc = 1 + max(self.get_hight(nueva_raiz.left), self.get_hight(nueva_raiz.right))
+        nueva_raiz.height = nueva_raiz._heightCalc - 1
         
         return nueva_raiz
     
@@ -239,9 +247,13 @@ class Spotify_Tree:
         nueva_raiz.left = current
         
         # Arreglamos las respectivas alturas de los nodos que estamos moviendo
-        current.height = 1 + max(self.get_hight(current.left), self.get_hight(current.right))
-        nueva_raiz.height = 1 + max(self.get_hight(nueva_raiz.left), self.get_hight(nueva_raiz.right))
-        
+        current._heightCalc = 1 + max(self.get_hight(current.left), self.get_hight(current.right))
+        current.height = current._heightCalc - 1
+
+        nueva_raiz._heightCalc = 1 + max(self.get_hight(nueva_raiz.left), self.get_hight(nueva_raiz.right))
+        nueva_raiz.height = nueva_raiz._heightCalc - 1
+
+
         return nueva_raiz
     
     def existe_nodo(self,ID)->bool:
@@ -274,7 +286,7 @@ class Spotify_Tree:
         if node is None:
             print("No hallado")
         else:
-            print(f"{node.name} valence {node.valence_mean} height {node.height} left:{node.left} right {node.right}")
+            print(f"{node.name} valence {node.valence_mean} height {node._heightCalc} left:{node.left} right {node.right}")
 
     def retornar_nodo(self,ID)->User:
         """
@@ -479,3 +491,13 @@ tree.levelOrderPrint(tree.root)
 tree.buscar_nodo(tree.dar_ID(tree.root,"J"))
 print("Number of songs",len(tree.retornar_nodo(tree.dar_ID(tree.root,"J")).songs))
 print("First song",tree.retornar_nodo(tree.dar_ID(tree.root,"J")).songs[0])
+
+
+print('\n')
+
+print(f'[+]\tEl nodo más pequeño es {tree.leftmost(tree.root)}\n\tAltura: {tree.leftmost(tree.root).height}')
+
+
+print(f'\n[+]\tEl nodo más grande es {tree.rightmost(tree.root)}\n\tAltura: {tree.rightmost(tree.root).height}')
+
+print(f'\n[+]\tEl nodo raíz del arbol es {tree.root} con altura {tree.root.height}')

@@ -6,7 +6,8 @@ class Node:
         self.value = value
         self.left = None
         self.right = None
-        self.height = 1
+        self._heightCalc = 1
+        self.height = 0
 
     def __str__(self):
         return f"Value: {self.value}"
@@ -25,7 +26,8 @@ class User(Node):
         self.valences =[data[4]]
         self.left = None
         self.right = None
-        self.height = 1 
+        self._heightCalc = 1
+        self.height = 0
 
     # Pendiente agregar para media de valencia y canciones tal vez
 
