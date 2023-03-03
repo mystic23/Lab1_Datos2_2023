@@ -1,31 +1,11 @@
-# Lab1_Datos2_2023
+# Laboratorio 1 - Estructura de datos II
 
-## 1
-+ Leer CSV [X]
-+ Insertar un nodo (opcional, hacer validación). [X]
-+ Eliminar un nodo. [X]
-+ Buscar un nodo (Queda libre como devolver si el nodo existe). [X]
-+ Recorrido en orden por nivel (De forma recursiva). [X]
-+ La altura dada un nodo (Recordar que la altura de un nodo es definida como el número de aristas más larga desde el nodo hasta un nodo hoja) [X]
-+ Encontrar el abuelo o tío de un nodo dado. [X]
-+ extra: Interfaz gráfica []
+El laboratorio consistió en 3 puntos, el cual fue repartido entre cada uno de los integrantes del equipo. El primer punto consistía en crear métodos para resolver ciertos problemas en un árbol binario. El segundo en investigar un problema que pueda ser resuelto mediante los conocimientos aprendidos a lo largo del curso. Finalmente, en el tercer punto se pidió resolver un problema con el uso de árboles B y B+.
 
-## 2
-+ escoger problema[X]
-+ crear merkle tree []
-+ dar ejemplos
+El laboratorio fue resuelto de manera satisfactoria, empleando cada uno de los conceptos aprendidos hasta el momento en el curso de Estructura de datos II (árboles binarios, etc).
 
-## 3 
-+ plantear ejemplo []
-+ algoritmo arbol B []
+Integrantes del equipo 📚 :
 
-
-
-
-
-
-Integrantes:sunglasses::
-* David Hernández Mosquera
-* María Isabel Solá Valle
-* Jesús Antonio Zuluaga Moreno
-
+- David Hernandez
+- María Solá
+- Jesus Zuluaga
