@@ -2,6 +2,14 @@ import hashlib
 
 # Función para calcular el hash SHA-256 de un bloque de datos
 def sha256(block):
+    """_summary_
+
+    Args:
+        block (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     return hashlib.sha256(block).digest()
 
 # Función para construir un árbol de Merkle a partir de una lista de bloques de datos
