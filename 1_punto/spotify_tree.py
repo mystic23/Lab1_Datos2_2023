@@ -533,36 +533,6 @@ for pre, fill, node in RenderTree(root_node):
     print("%s%s" % (pre, node.name))
     
     
-"""
-Este ignorelo, crea un arbol para cada User_Id 
-import pandas as pd
-from anytree import Node, RenderTree
-
-
-# Fusionamos los datos utilizando la columna User_ID como clave
-df = pd.merge(m1,df2,how="outer")
-
-
-
-
-# Crear un diccionario de nodos usando User_ID como clave
-nodes_dict = {}
-for _, row in df.iterrows():
-    if row["User_ID"] not in nodes_dict:
-        nodes_dict[row["User_ID"]] = Node(row["User_name"], artist_name=None)
-    if row["Artist_name"] not in [c.artist_name for c in nodes_dict[row["User_ID"]].children]:
-        Node(row["Track"], parent=nodes_dict[row["User_ID"]], artist_name=row["Artist_name"], valence=row["valence"])
-
-# Imprimir el árbol completo para cada User_ID
-for user_id in nodes_dict:
-    print(f"Árbol para User_ID={user_id}:")
-    for pre, fill, node in RenderTree(nodes_dict[user_id]):
-        print(f"{pre}{node.name}")
-        for sub_pre, sub_fill, sub_node in RenderTree(node):
-            print(f"{sub_pre}{sub_node.name}")
-    print()
-
-"""
 
 """
 Este codigo de tkinter lo unico que hace es mostrar como "tabla" el csv con todos los datos del csv, si quiere verla solo quite los
