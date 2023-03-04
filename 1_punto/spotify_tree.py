@@ -1,5 +1,7 @@
 from node import Node,User
 import pandas as pd
+from anytree import Node, RenderTree
+
 pd.options.mode.chained_assignment = None  # default='warn'
 
 class Spotify_Tree:
@@ -501,3 +503,128 @@ print(f'[+]\tEl nodo más pequeño es {tree.leftmost(tree.root)}\n\tAltura: {tre
 print(f'\n[+]\tEl nodo más grande es {tree.rightmost(tree.root)}\n\tAltura: {tree.rightmost(tree.root).height}')
 
 print(f'\n[+]\tEl nodo raíz del arbol es {tree.root} con altura {tree.root.height}')
+
+
+print(f"--Así se ve nuestro arbol--")
+print(f"─────☆─────")
+print(f"─────▓˛˚────")
+print(f"────▓˛˚▓˛˚───")
+print(f"───▓˛˚▓˛ ▓*──")
+print(f"──▓˛˚▓˛▓˛*▓˛˚─")
+print(f"─▓˛▓˚▓˛▓*▓˛▓˛˚")
+print(f"─────██────")
+print(f"███████████")
+print(f"---------------------------")
+df = pd.merge(m1,df2,how="outer")
+
+
+root_node = Node('root')
+# Crea el diccionario de nodos
+nodes_dict = {}
+for user_id, user_df in df.groupby('User_ID'):
+    user_node = Node(user_id, parent=root_node)
+    for index, row in user_df.iterrows():
+        artist_node = Node(row['Artist_name'], parent=user_node)
+        track_node = Node(row['Track'], parent=artist_node)
+        setattr(track_node, 'valence', row['valence'])
+    nodes_dict[user_id] = user_node
+
+for pre, fill, node in RenderTree(root_node):
+    print("%s%s" % (pre, node.name))
+    
+    
+"""
+Este ignorelo, crea un arbol para cada User_Id 
+import pandas as pd
+from anytree import Node, RenderTree
+
+
+# Fusionamos los datos utilizando la columna User_ID como clave
+df = pd.merge(m1,df2,how="outer")
+
+
+
+
+# Crear un diccionario de nodos usando User_ID como clave
+nodes_dict = {}
+for _, row in df.iterrows():
+    if row["User_ID"] not in nodes_dict:
+        nodes_dict[row["User_ID"]] = Node(row["User_name"], artist_name=None)
+    if row["Artist_name"] not in [c.artist_name for c in nodes_dict[row["User_ID"]].children]:
+        Node(row["Track"], parent=nodes_dict[row["User_ID"]], artist_name=row["Artist_name"], valence=row["valence"])
+
+# Imprimir el árbol completo para cada User_ID
+for user_id in nodes_dict:
+    print(f"Árbol para User_ID={user_id}:")
+    for pre, fill, node in RenderTree(nodes_dict[user_id]):
+        print(f"{pre}{node.name}")
+        for sub_pre, sub_fill, sub_node in RenderTree(node):
+            print(f"{sub_pre}{sub_node.name}")
+    print()
+
+"""
+
+"""
+Este codigo de tkinter lo unico que hace es mostrar como "tabla" el csv con todos los datos del csv, si quiere verla solo quite los
+triple " y listo.
+
+"""
+"""
+import tkinter as tk
+import pandas as pd
+import ttkthemes as tks
+from ttkthemes import ThemedTk
+from ttkthemes import *
+import tkinter.ttk as ttk
+
+# Cargar los datos del archivo CSV
+data = pd.merge(m1,df2,how="outer")
+
+# Crear la ventana principal de la aplicación
+root = ThemedTk(theme="breeze") # Tema de la aplicación
+root.title("Árbol de datos")
+root.geometry("600x400")
+
+# Crear un estilo personalizado para el árbol
+style = ttk.Style()
+style.configure("Treeview", font=('Arial', 12))
+
+# Crear el árbol
+tree = ttk.Treeview(root)
+
+# Agregar las columnas del árbol
+tree["columns"] = tuple(data.columns)
+
+# Configurar las columnas del árbol
+tree.column("#0", width=0, stretch=tk.NO)
+for column in data.columns:
+    tree.column(column, anchor=tk.CENTER, width=120)
+    tree.heading(column, text=column, anchor=tk.CENTER)
+
+# Agregar los datos al árbol
+for index, row in data.iterrows():
+    tree.insert(parent='', index='end', text='', values=tuple(row))
+
+# Agregar el árbol a la ventana principal
+tree.pack(fill=tk.BOTH, expand=1)
+
+# Cargar el archivo CSS
+style.theme_use("clam") # Cambiar el tema de la aplicación
+style.theme_settings("default", {"TNotebook": {"configure": {"tabmargins": [0, 0, 0, 0]}}})
+style.theme_create('CustomStyle', parent='alt', settings={
+    "TButton": {"configure": {"padding": [6, 4], "background": "#FDFDFD"}},
+    "TNotebook": {"configure": {"tabmargins": [0, 0, 0, 0]}},
+    "TNotebook.Tab": {"configure": {"padding": [10, 5], "background": "#FDFDFD"}},
+    "TFrame": {"configure": {"background": "#FDFDFD"}},
+    "Treeview": {"configure": {"background": "#FDFDFD", "fieldbackground": "#FDFDFD"}},
+    "Treeview.Heading": {"configure": {"background": "#FDFDFD"}},
+    "Treeview.Item": {"configure": {"foreground": "#000000", "background": "#FDFDFD"}},
+    "Treeview.Item.selected": {"configure": {"foreground": "#000000", "background": "#F0F0F0"}},
+})
+style.theme_use('CustomStyle')
+
+# Ejecutar la aplicación
+root.mainloop()
+"""
+
+
